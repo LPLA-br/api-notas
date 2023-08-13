@@ -1,0 +1,18 @@
+{
+  "name": "Api-notas",
+  "version": "1.0.0",
+  "description": "api para aplicação de notas",
+  "main": "index.js",
+  "scripts": {
+    "test": "./start.bash"
+  },
+  "keywords": [
+    "mongodb"
+  ],
+  "author": "Luiz",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongodb": "^5.7.0"
+  }
+}
