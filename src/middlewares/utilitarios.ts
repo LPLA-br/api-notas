@@ -2,21 +2,21 @@
  * UTILITÁRIOS
  ***********************/
 
-const express = require('express');
+import express from 'express';
 
 // GLOBAIS PARA TODAS REQUISIÇÕES app.use();
 
 /** emite linha de log para cada requisição recebida */
-const uriLog = ( req, res, next )=>
+const uriLog = ( req: express.Request, res: express.Response, next: express.NextFunction )=>
 {
 	const t = new Date();
 	console.log( `REQUISIÇÃO de ${req.ip} do recurso ${req.path} de método ${req.method} - ${t.toString()}` );
 	next();
 };
 
-// LOCAIS À ROTAS ESPECÍFICAS antes do controller.
+// LOCAIS ÀS ROTAS ESPECÍFICAS antes do controller.
 
-const mostrarUrl = ( req, res, next )=>
+const mostrarUrl = ( req: express.Request, res: express.Response, next: express.NextFunction )=>
 {
 
 	const regexp = new RegExp( "\/[a-z]*\?.*$" );
@@ -32,8 +32,4 @@ const mostrarUrl = ( req, res, next )=>
 	next();
 };
 
-module.exports =
-{
-	uriLog,
-	mostrarUrl
-};
+export { uriLog, mostrarUrl };
