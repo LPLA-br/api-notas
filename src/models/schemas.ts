@@ -44,6 +44,7 @@ class Nota
 	 */
 	constructor( credenciais: nota )
 	{
+		this.uri = credenciais.uri;
 		this.client = new MongoClient( credenciais.uri );
 
 		this.database = this.client.db( credenciais.database );
@@ -127,14 +128,20 @@ class Nota
 			{
 				const cursor: any = this.colecao.find();
 				let titulos: Array<string> | Array<Object> = [];
+
 				for await (const doc of cursor)
 				{
 				   titulos.push( doc?.titulo );
 				}
+
 				if ( typeof titulos[0] == 'undefined' )
+				{
 					return [ "nenhum_titulo" ];
+				}
 				else
+				{
 					return titulos;
+				}
 
 			}
 			catch( erro )
@@ -154,6 +161,7 @@ class Nota
 				console.log(erro);
 			}
 		}
+
 		return ["no_operation"];
 	}
 

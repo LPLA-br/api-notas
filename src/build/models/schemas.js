@@ -21,6 +21,7 @@ const mongodb_1 = require("mongodb");
 ;
 class Nota {
     constructor(credenciais) {
+        this.uri = credenciais.uri;
         this.client = new mongodb_1.MongoClient(credenciais.uri);
         this.database = this.client.db(credenciais.database);
         this.colecao = this.database.collection(credenciais.colecao);
@@ -79,10 +80,12 @@ class Nota {
                         }
                         finally { if (e_1) throw e_1.error; }
                     }
-                    if (typeof titulos[0] == 'undefined')
+                    if (typeof titulos[0] == 'undefined') {
                         return ["nenhum_titulo"];
-                    else
+                    }
+                    else {
                         return titulos;
+                    }
                 }
                 catch (erro) {
                     console.log(erro);

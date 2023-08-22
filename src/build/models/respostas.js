@@ -4,9 +4,7 @@ exports.Resposta = void 0;
 ;
 class Resposta {
     constructor(cons) {
-        this.resp.stat = cons.stat;
-        this.resp.info = cons.info;
-        this.resp.dados = cons.dados;
+        this.resp = cons;
     }
     get mandar() {
         return this.resp;

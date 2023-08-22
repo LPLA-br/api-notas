@@ -37,21 +37,19 @@ const postCriar = (req, res) => {
 exports.postCriar = postCriar;
 const getVisualizar = (req, res) => {
     const { titulo } = req.query;
-    if (typeof titulo != "string") {
-        let resposta = new respostas_1.Resposta({ stat: '400', info: 'Má requisição para consulta' });
-        res.status(400).json(resposta.mandar);
-    }
     (() => __awaiter(void 0, void 0, void 0, function* () {
         try {
             let dados;
-            const inst = new schemas_1.Nota({ uri: mongo_1.uri, database: "anotacoes", colecao: "notas", titulo: titulo });
-            if (typeof (titulo) == 'undefined' || titulo == '') {
+            let inst;
+            if (typeof titulo == 'string') {
+                inst = new schemas_1.Nota({ uri: mongo_1.uri, database: "anotacoes", colecao: "notas", titulo: titulo });
                 dados = yield inst.procurar();
                 yield inst.fechar();
                 let resposta = new respostas_1.Resposta({ stat: '200', dados: dados });
                 res.status(200).json(resposta.mandar);
             }
             else {
+                inst = new schemas_1.Nota({ uri: mongo_1.uri, database: "anotacoes", colecao: "notas", titulo: '' });
                 dados = yield inst.procurar();
                 yield inst.fechar();
                 let resposta = new respostas_1.Resposta({ stat: '200', dados: dados });
@@ -60,7 +58,7 @@ const getVisualizar = (req, res) => {
         }
         catch (erro) {
             console.log(erro);
-            let resposta = new respostas_1.Resposta({ stat: '500', info: 'Erro interno do servidor impediu a obenção do recurso' });
+            let resposta = new respostas_1.Resposta({ stat: '500', info: 'Erro interno do servidor impediu a obtenção do recurso' });
             res.status(500).json(resposta.mandar);
         }
     }))();
@@ -68,17 +66,19 @@ const getVisualizar = (req, res) => {
 exports.getVisualizar = getVisualizar;
 const delRemover = (req, res) => {
     const { titulo } = req.body;
-    if (typeof titulo == 'undefined') {
-        let resposta = new respostas_1.Resposta({ stat: '400', info: 'Má requisição de deleção' });
-        res.status(400).json(resposta.mandar);
-    }
     (() => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const inst = new schemas_1.Nota({ uri: mongo_1.uri, database: "anotacoes", colecao: "notas", titulo: titulo });
-            yield inst.deletar();
-            yield inst.fechar();
-            let resposta = new respostas_1.Resposta({ stat: '200', info: 'Recurso deletado' });
-            res.status(200).json(resposta.mandar);
+            if (typeof titulo == 'undefined') {
+                let resposta = new respostas_1.Resposta({ stat: '400', info: 'Má requisição de deleção' });
+                res.status(400).json(resposta.mandar);
+            }
+            else {
+                const inst = new schemas_1.Nota({ uri: mongo_1.uri, database: "anotacoes", colecao: "notas", titulo: titulo });
+                yield inst.deletar();
+                yield inst.fechar();
+                let resposta = new respostas_1.Resposta({ stat: '200', info: 'Recurso deletado' });
+                res.status(200).json(resposta.mandar);
+            }
         }
         catch (erro) {
             console.log(erro);
@@ -90,13 +90,6 @@ const delRemover = (req, res) => {
 exports.delRemover = delRemover;
 const putEditar = (req, res) => {
     const { tituloriginal, titulo, corpo } = req.body;
-    const entrada = [tituloriginal, titulo, corpo];
-    for (let elemento of entrada) {
-        if (typeof elemento == 'undefined') {
-            let resposta = new respostas_1.Resposta({ stat: "400", info: "Má requisição de Edição: {tituloriginal, titulo, corpo}" });
-            res.status(400).json(resposta.mandar);
-        }
-    }
     (() => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const inst = new schemas_1.Nota({ uri: mongo_1.uri, database: "anotacoes", colecao: "notas", titulo: titulo });

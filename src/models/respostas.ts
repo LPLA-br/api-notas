@@ -6,13 +6,13 @@
 
 /** Interface da descrição
 *   @interface
-*   @property { string | undefined } stat - status da requisição
-*   @property { string | undefined } info - informações de erro
-*   @property { Object[] | string[] | undefined } dados - informações variáveis de requisição bem sucedida
+*   @property { string } stat - status da requisição
+*   @property { string } info - informações de erro
+*   @property { Object[] | string[] } dados - informações variáveis de requisição bem sucedida
 * */
-interface resposta
+interface Respost
 {
-	stat?: string | undefined;
+	stat?: string | undefined ;
 	info?: string | undefined;
 	dados?: Object[] | string[] | undefined;
 };
@@ -23,25 +23,24 @@ interface resposta
 class Resposta
 {
 
-	public resp: resposta;
+	/** Objeto de resposta */
+	protected resp: Respost;
 
 	/** Construtor de notas.
 	    @constructor
-	    @param {resposta} cons - dados para construção de uma resposta.
+	    @param {Respost} cons - dados para construção de uma Resposta.
 	*/
-	constructor( cons: resposta )
+	constructor( cons: Respost )
 	{
-		this.resp.stat = cons.stat;
-		this.resp.info = cons.info;
-		this.resp.dados = cons.dados;
+		this.resp = cons;
 	}
 
 	/** Mandar resposta GETTER.
 	*   @method
 	*   @public
-	*   @returns {resposta} dados da resposta
+	*   @returns {Respost} dados da resposta
 	* */
-	public get mandar(): resposta
+	public get mandar(): Respost
 	{
 		return this.resp;
 	}

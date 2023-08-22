@@ -4,16 +4,14 @@
  * DE NOTAS SIMPLES
  ********************/
 
-import { Response } from 'express';
-import { Request } from 'express';
-
+import express from 'express';
 import { uri } from '../configs/mongo';
 
 /* API dos dados */
 import { Nota } from '../models/schemas';
 import { Resposta } from '../models/respostas';
 
-const postCriar = ( req: Request , res: Response ) =>
+const postCriar = ( req: express.Request , res: express.Response ) =>
 {
 	const { titulo, corpo } = req.body;
 
@@ -47,35 +45,36 @@ const postCriar = ( req: Request , res: Response ) =>
 	)();
 };
 
-const getVisualizar = ( req: Request, res: Response ) =>
+const getVisualizar = ( req: express.Request, res: express.Response ) =>
 {
 	const { titulo } = req.query;
-
-	if ( typeof titulo != "string" )
-	{
-		let resposta = new Resposta( { stat: '400', info: 'Má requisição para consulta' } );
-		res.status(400).json( resposta.mandar );
-	}
 
 	( async ()=>
 	{
 		try
 		{
 			let dados: Object[] | string[];
-			const inst = new Nota( { uri: uri, database: "anotacoes", colecao:"notas", titulo: titulo } );
+			let inst;
 
-			if ( typeof(titulo) == 'undefined' || titulo == '' )
+			if ( typeof titulo == 'string' )
 			{
-				/* Busca de títulos no banco de dados */
+				//query
+ 				inst = new Nota( { uri: uri, database: "anotacoes", colecao:"notas", titulo: titulo } );
+
+				/* retorno da matriz de objetos */
 				dados = await inst.procurar();
 				await inst.fechar();
 
 				let resposta = new Resposta( { stat: '200', dados: dados } );
 				res.status(200).json( resposta.mandar );
+
 			}
 			else
 			{
-				/* retorno de matriz de objetos. */
+				//todos títulos
+ 				inst = new Nota( { uri: uri, database: "anotacoes", colecao:"notas", titulo: '' } );
+
+				/* retorno de matriz de strings. */
 				dados = await inst.procurar();
 				await inst.fechar();
 
@@ -87,7 +86,7 @@ const getVisualizar = ( req: Request, res: Response ) =>
 		{
 			console.log( erro );
 
-			let resposta = new Resposta( { stat: '500', info: 'Erro interno do servidor impediu a obenção do recurso' } );
+			let resposta = new Resposta( { stat: '500', info: 'Erro interno do servidor impediu a obtenção do recurso' } );
 			res.status(500).json( resposta.mandar );
 		}
 		
@@ -95,27 +94,31 @@ const getVisualizar = ( req: Request, res: Response ) =>
 	)();
 };
 
-const delRemover = ( req: Request, res: Response ) =>
+const delRemover = ( req: express.Request, res: express.Response ) =>
 {
 	const { titulo } = req.body;
 
-	if ( typeof titulo == 'undefined' )
-	{
-		let resposta = new Resposta( { stat: '400', info: 'Má requisição de deleção' } );
-		res.status(400).json( resposta.mandar );
-	}
 
 	( async ()=>
 	{
 		try
 		{
-			const inst = new Nota( { uri: uri, database: "anotacoes", colecao:"notas", titulo: titulo}  );
 
-			await inst.deletar();
-			await inst.fechar();
+			if ( typeof titulo == 'undefined' )
+			{
+				let resposta = new Resposta( { stat: '400', info: 'Má requisição de deleção' } );
+				res.status(400).json( resposta.mandar );
+			}
+			else
+			{
+				const inst = new Nota( { uri: uri, database: "anotacoes", colecao:"notas", titulo: titulo }  );
 
-			let resposta = new Resposta( { stat: '200', info: 'Recurso deletado' } );
-			res.status(200).json( resposta.mandar );
+				await inst.deletar();
+				await inst.fechar();
+
+				let resposta = new Resposta( { stat: '200', info: 'Recurso deletado' } );
+				res.status(200).json( resposta.mandar );
+			}
 		}
 		catch ( erro )
 		{
@@ -127,22 +130,14 @@ const delRemover = ( req: Request, res: Response ) =>
 	)();
 };
 
-const putEditar = ( req: Request, res: Response ) =>
+const putEditar = ( req: express.Request, res: express.Response ) =>
 {
 	const { tituloriginal, titulo, corpo } = req.body;
 
-	const entrada = [ tituloriginal, titulo, corpo ];
-	for ( let elemento of entrada )
-	{
-		if ( typeof elemento == 'undefined' )
-		{
-			let resposta = new Resposta( { stat: "400", info: "Má requisição de Edição: {tituloriginal, titulo, corpo}" } );
-			res.status(400).json( resposta.mandar );
-		}
-	}
-
 	( async ()=>
 	{
+
+
 		try
 		{
 			const inst = new Nota( { uri: uri, database: "anotacoes", colecao:"notas", titulo: titulo}  );
@@ -163,7 +158,7 @@ const putEditar = ( req: Request, res: Response ) =>
 	)();
 };
 
-const patchEditar = ( req: Request, res: Response ) =>
+const patchEditar = ( req: express.Request, res: express.Response ) =>
 {
 	let resposta = new Resposta( { stat: '501', info: "Edição parcial não implementada" } );
 	res.status(501).json( resposta.mandar );
